@@ -29,7 +29,7 @@
 
 #include <WebUSB.h>
 
-WebUSB WebUSBSerial(1, "pagenodes.com");
+WebUSB WebUSBSerial(1, "fragile.systems");
 
 #define SerialW WebUSBSerial
 
