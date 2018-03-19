@@ -15,7 +15,6 @@ function WebUSBSerialPort(options) {
 
   options = options || {};
   self.filters = options.filters || DEFAULT_FILTERS;
-
 }
 
 util.inherits(WebUSBSerialPort, stream.Stream);
@@ -42,6 +41,8 @@ WebUSBSerialPort.prototype.init = function() {
         });
       };
 
+
+      // TODO: move this to the open method - noopkat
       self.device.open()
         .then(function(){
           return self.device.configuration;
@@ -72,10 +73,6 @@ WebUSBSerialPort.prototype.init = function() {
           readLoop();
         });
     })
-    .catch(function(err){
-      self.emit('error', err);
-    });
-
 }
 
 WebUSBSerialPort.prototype.open = function (callback) {
@@ -83,10 +80,7 @@ WebUSBSerialPort.prototype.open = function (callback) {
   if (callback) {
     callback();
   }
-
 };
-
-
 
 WebUSBSerialPort.prototype.write = function (data, callback) {
   console.log('send', data);
@@ -101,10 +95,7 @@ WebUSBSerialPort.prototype.write = function (data, callback) {
       callback(error);
     }
   });
-
 };
-
-
 
 WebUSBSerialPort.prototype.close = function (callback) {
   console.log('closing');
@@ -117,7 +108,7 @@ WebUSBSerialPort.prototype.close = function (callback) {
               'index': 0x02})
     .then(function(){
       self.device.close();
-      if(callback){
+      if (callback){
         callback();
       }
     });
@@ -125,20 +116,16 @@ WebUSBSerialPort.prototype.close = function (callback) {
 };
 
 WebUSBSerialPort.prototype.flush = function (callback) {
-  console.log('flush');
   if(callback){
     callback();
   }
 };
 
 WebUSBSerialPort.prototype.drain = function (callback) {
-  console.log('drain');
   if(callback){
     callback();
   }
 };
-
-
 
 module.exports = {
   SerialPort: WebUSBSerialPort
