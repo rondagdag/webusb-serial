@@ -16,64 +16,67 @@ function WebUSBSerialPort(options) {
   options = options || {};
   self.filters = options.filters || DEFAULT_FILTERS;
 
-  navigator.usb.getDevices().then(function(devices){
-    if(devices.length){
-      return devices[options.deviceNumber || 0];
-    }
-    return navigator.usb.requestDevice({filters: self.filters });
-  })
-  .then(function(device){
-    self.device = device;
-
-    var readLoop = function(){
-      self.device.transferIn(5, 64).then(function(result){
-        console.log('read', result);
-        self.emit('data', new Buffer(result.data.buffer));
-        readLoop();
-      }, function(error){
-        console.log('read error', error);
-        self.emit('emit', error);
-      });
-    };
-
-    self.device.open()
-      .then(function(){
-        return self.device.configuration;
-      })
-      .then(function(config){
-        if (config.configurationValue == 1) {
-          return {};
-        } else {
-          throw new Error("Need to setConfiguration(1).");
-        }
-      })
-      .catch(function(error){
-        return self.device.setConfiguration(1);
-      })
-      .then(function(){
-        return self.device.claimInterface(2);
-      })
-      .then(function(){
-        return  self.device.controlTransferOut({
-          'requestType': 'class',
-          'recipient': 'interface',
-          'request': 0x22,
-          'value': 0x01,
-          'index': 0x02});
-      })
-      .then(function() {
-        self.emit('open');
-        readLoop();
-      });
-  })
-  .catch(function(err){
-    self.emit('error', err);
-  });
-
 }
 
 util.inherits(WebUSBSerialPort, stream.Stream);
 
+WebUSBSerialPort.prototype.init = function() {
+  var self = this;
+  /*navigator.usb.getDevices().then(function(devices){
+    if(devices.length){
+      return devices[options.deviceNumber || 0];
+    }*/
+
+   return navigator.usb.requestDevice({filters: self.filters })
+    .then(function(device){
+      self.device = device;
+
+      var readLoop = function(){
+        self.device.transferIn(5, 64).then(function(result){
+          console.log('read', result);
+          self.emit('data', new Buffer(result.data.buffer));
+          readLoop();
+        }, function(error){
+          console.log('read error', error);
+          self.emit('emit', error);
+        });
+      };
+
+      self.device.open()
+        .then(function(){
+          return self.device.configuration;
+        })
+        .then(function(config){
+          if (config.configurationValue == 1) {
+            return {};
+          } else {
+            throw new Error("Need to setConfiguration(1).");
+          }
+        })
+        .catch(function(error){
+          return self.device.setConfiguration(1);
+        })
+        .then(function(){
+          return self.device.claimInterface(2);
+        })
+        .then(function(){
+          return  self.device.controlTransferOut({
+            'requestType': 'class',
+            'recipient': 'interface',
+            'request': 0x22,
+            'value': 0x01,
+            'index': 0x02});
+        })
+        .then(function() {
+          self.emit('open');
+          readLoop();
+        });
+    })
+    .catch(function(err){
+      self.emit('error', err);
+    });
+
+}
 
 WebUSBSerialPort.prototype.open = function (callback) {
   this.emit('open');
