@@ -6,7 +6,8 @@ var stream = require('stream');
 var DEFAULT_FILTERS = [
   { 'vendorId': 0x2341, 'productId': 0x8036 }, // Arduino Leonardo
   { 'vendorId': 0x2341, 'productId': 0x8037 }, // Arduino Micro
-  { 'vendorId': 0x239a, 'productId': 0x8011 } // Adafruit Circuit Playground
+  { 'vendorId': 0x239a, 'productId': 0x8011 }, // Adafruit Circuit Playground
+  { 'vendorId': 0x2341, 'productId': 0x804f }, // Arduino MKRZero
 ];
 
 

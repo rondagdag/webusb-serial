@@ -29,7 +29,7 @@
 
 #include <WebUSB.h>
 
-WebUSB WebUSBSerial(1, "fragile.systems");
+WebUSB WebUSBSerial(1, "localhost:8000");
 
 #define SerialW WebUSBSerial
 
